@@ -1,0 +1,23 @@
+{
+  "name": "lagomorph",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "bird-puns": "latest",
+    "body-parser": "~1.15.2",
+    "cleverbot.io": "^1.0.4",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.2.0",
+    "dotenv": "^4.0.0",
+    "express": "~4.14.0",
+    "firebase-admin": "^5.8.1",
+    "giphy-js-sdk-core": "^1.0.3",
+    "jade": "~1.11.0",
+    "morgan": "~1.7.0",
+    "serve-favicon": "~2.3.0",
+    "tmi.js": "^1.1.2"
+  }
+}
