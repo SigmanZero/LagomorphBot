@@ -1,3 +1,6 @@
+var dotEnv = require('dotenv');
+dotEnv.config();
+
 var tmi = require('tmi.js');
 var fs = require("fs");
 var https = require('https');
@@ -14,9 +17,6 @@ firebase.initializeApp({
     databaseURL: "https://lagomorph-a98ac.firebaseio.com"
 });
 var database = firebase.database();
-
-var dotEnv = require('dotenv');
-dotEnv.config();
 
 var scope = {};
 var commandChar = '!';
@@ -52,6 +52,11 @@ var tmiOptions = {
 
 var client = new tmi.client(tmiOptions);
 client.connect();
+
+function isAdmin(isMod, userid){
+    // TODO: change to database of trusted users?
+    return !!(isMod || userid === process.env.SIGMANZERO_USER_ID);
+}
 
 client.on("connected", function(address, port){
     database.ref("colors").once('value').then(function(snapshot){
@@ -158,7 +163,7 @@ scope.HELLO = function(user, msg){
 };
 
 scope.EXPOSED = function(user, msg){
-    if(user.mod) {
+    if(isAdmin(user.mod, user["user-id"])) {
         if (msg.length > 2 && msg[1] === "add") {
             var publication = "";
             for (var i = 2, len = msg.length; i < len; ++i) {
@@ -188,7 +193,7 @@ scope.EXPOSED = function(user, msg){
 };
 
 scope.ADD = function(user, msg){
-    if(user.mod && msg.length > 2){
+    if(isAdmin(user.mod, user["user-id"]) && msg.length > 2){
         var cmdTrigger = msg[1].toUpperCase();
         if(channelCommands[cmdTrigger] !== undefined || commonCommands[cmdTrigger] !== undefined) {
             sendMessage("Command already exists.");
@@ -212,7 +217,7 @@ scope.ADD = function(user, msg){
 };
 
 scope.EDIT = function(user, msg){
-    if(user.mod && msg.length > 2){
+    if(isAdmin(user.mod, user["user-id"]) && msg.length > 2){
         var cmdTrigger = msg[1].toUpperCase();
         if(channelCommands[cmdTrigger] === undefined){
             sendMessage("Command doesn't exist.");
@@ -236,7 +241,7 @@ scope.EDIT = function(user, msg){
 };
 
 scope.REMOVE = function(user, msg){
-    if(user.mod && msg.length > 1){
+    if(isAdmin(user.mod, user["user-id"]) && msg.length > 1){
         var cmdTrigger = msg[1].toUpperCase();
         if(channelCommands[cmdTrigger] === undefined){
             sendMessage("Command doesn't exist.");
@@ -255,14 +260,17 @@ scope.REMOVE = function(user, msg){
 };
 
 scope.BLAME = function(user, msg){
-    if(user.mod && msg.length > 2) {
+    if(isAdmin(user.mod, user["user-id"]) && msg.length > 2) {
         // TODO: Mod actions
         if(msg[1] === "add"){
-
+            sendMessage("DEBUG: adding blame");
+            return;
         } else if (msg[1] === "remove") {
-
+            sendMessage("DEBUG: removing blame");
+            return;
         } else if (msg[1] === "edit") {
-
+            sendMessage("DEBUG: editing blame");
+            return;
         }
     }
 
