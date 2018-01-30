@@ -325,6 +325,10 @@ scope.TALK = function(user, msg){
         ask += msg[msg.length - 1];
 
         convobot.ask(ask, function(err, response){
+            if(err){
+                sendMessage("I'm too dumb to respond.");
+                return;
+            }
             sendMessage(response);
         });
     }
